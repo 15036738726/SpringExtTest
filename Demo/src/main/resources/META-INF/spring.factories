@@ -1,0 +1,12 @@
+com.example.demo.spi.MyEnableAutoConfiguration=com.example.demo.entity.User,\
+  com.example.demo.entity.Admin
+
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.example.demo.spi.autoConfigTest.UserAutoConfiguration
+
+#配置文件支持json方式情况测试
+org.springframework.boot.env.PropertySourceLoader=\
+com.example.demo.spi.PropertySourceLoader.JsonPropertySourceLoader
+
+
+org.springframework.context.ApplicationContextInitializer=com.example.demo.spi.ApplicationContextInitializer.MyApplicationContextInitializer

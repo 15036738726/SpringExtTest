@@ -1,2 +1,84 @@
 # SpringExtTest
 Spring/Boot的那些常用扩展点测试
+
+三万字盘点Spring/Boot的那些常用扩展点
+https://zhuanlan.zhihu.com/p/546119856
+
+
+Springboot扩展点
+https://blog.csdn.net/fox9916/article/details/128917992
+
+FactoryBean
+BeanFactory是Bean的工厂，可以帮我们生成想要的Bean，而FactoryBean就是一种Bean的类型。
+当往容器中注入class类型为FactoryBean的类型的时候，最终生成的Bean是用过FactoryBean的getObject获取的
+
+
+@Import
+第一种：配置类实现了 ImportSelector 接口
+
+如今在看boot自动配置
+@SpringBootApplication 中的自动配置注解 @EnableAutoConfiguration上有一个注解@Import({AutoConfigurationImportSelector.class})
+那么类路径下的项目依赖对象是如何加载到容器中的呢,就在AutoConfigurationImportSelector这个类中,
+public class AutoConfigurationImportSelector implements DeferredImportSelector,而DeferredImportSelector是ImportSelector的子接口,所以
+在AutoConfigurationImportSelector中重写了注册方法 即org.springframework.boot.autoconfigure.AutoConfigurationImportSelector#selectImports
+这个重写之后的方法返回的是:return StringUtils.toStringArray(autoConfigurationEntry.getConfigurations());
+autoConfigurationEntry.getConfigurations()就是SPI机制下的,去加载对应的类全限定数据的方法,内部肯定调用了SpringFactoriesLoader.loadSpringFactories方法,返回了一大堆类的全限命名
+
+
+第二种：配置类实现了 ImportBeanDefinitionRegistrar 接口
+当配置类实现了 ImportBeanDefinitionRegistrar 接口，你就可以自定义往容器中注册想注入的Bean。
+这个接口相比与 ImportSelector 接口的主要区别就是，ImportSelector不能对注入的类进行任何操作，
+但是 ImportBeanDefinitionRegistrar 是可以自己注入 BeanDefinition，可以添加属性之类的
+
+第三种：配置类什么接口都没实现 @Configuration + @Bean
+
+Bean的生命周期
+
+Bean生命周期的回调
+
+BeanPostProcessor
+
+Spring SPI机制
+
+
+SpringFactoriesLoader
+Spring的SPI机制规定，配置文件必须在classpath路径下的META-INF文件夹内，文件名必须为spring.factories，文件内容为键值对，一个键可以有多个值，
+只需要用逗号分割就行，同时键值都需要是类的全限定名(因为SpringFactoriesLoader.loadFactoryNames(MyEnableAutoConfiguration.class)是根据你指定的类的全路径去找key的
+
+
+SpringBoot启动扩展点
+1、自动装配
+自动装配说白了就是SPI机制的一种运用场景,这也说明了为什么springboot中需要自动装配的全路径对应的key都是EnableAutoConfiguration
+
+2、PropertySourceLoader
+实现可以读取json格式的配置文件
+
+
+3、ApplicationContextInitializer
+ApplicationContextInitializer也是SpringBoot启动过程的一个扩展点
+
+4、EnvironmentPostProcessor
+EnvironmentPostProcessor在SpringBoot启动过程中，也会调用，也是通过SPI机制来加载扩展的
+
+而前面说的几个需要SPI机制的扩展点，是因为在SpringBoot启动的时候，Spring容器还没有启动好，也就是无法从Spring容器获取到这些扩展的对象，为了兼顾扩展性，
+所以就通过SPI机制来实现获取到实现类
+
+
+5、ApplicationRunner和CommandLineRunner
+
+Spring Event 事件
+Event 事件可以说是一种观察者模式的实现，主要是用来解耦合的。当发生了某件事，只要发布一个事件，对这个事件的监听者（观察者）就可以对事件进行响应或者处理
+
+Spring实现了这种事件模型，你只需要基于Spring提供的API进行扩展，就可以完成事件的发布订阅
+
+ApplicationEvent
+
+ApplicationListener
+
+ApplicationEventPublisher
+
+Spring事件的传播
+Spring事件的传播就是指当通过子容器发布一个事件之后，不仅可以触发在这个子容器的事件监听器，还可以触发在父容器的这个事件的监听器
+
+
+命名空间
