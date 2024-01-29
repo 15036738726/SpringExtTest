@@ -1,6 +1,9 @@
 #spring:
 #  profiles:
 #    active: dev
+context:
+  listener:
+    classes: com.example.demo.event.properties.MyListener
 
 server:
   port: 9999
