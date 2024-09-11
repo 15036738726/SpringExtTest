@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -89,7 +87,7 @@ public class LifeCycle implements InitializingBean,BeanPostProcessor, Applicatio
         System.out.println("@Bean#destroyMethod()起作用，destroyMethod方法被调用了");
     }
 
-
+    // BeanPostProcessor触发问题,需要在别的地方注入该实体对象(引用一下)  才会触发这里的操作
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         System.out.println("------1111");
         return bean;
